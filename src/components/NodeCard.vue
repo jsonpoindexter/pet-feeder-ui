@@ -7,10 +7,11 @@
     <v-card-subtitle class="text-left">{{ node.ip }}</v-card-subtitle>
     <v-card-text v-for="(schedule, index) in node.schedule" :key="schedule">
       <v-menu
+        v-model="menu[index]"
         ref="menu"
         :close-on-content-click="false"
         :nudge-right="40"
-        :return-value.sync="node.schedule[index]"
+        :return-value.sync="time"
         transition="scale-transition"
         offset-y
         max-width="290px"
@@ -27,11 +28,7 @@
             v-on="on"
           ></v-text-field>
         </template>
-        <v-time-picker
-          :value="formatHourMinutes(node.schedule[index])"
-          full-width
-          @click:minute="$refs.menu[index].save(time)"
-        ></v-time-picker>
+        <v-time-picker v-if="menu[index]" v-model="time" full-width @click:minute="setFeedTime(index)"></v-time-picker>
       </v-menu>
     </v-card-text>
     <v-container>
@@ -55,10 +52,13 @@ export default class NodeCard extends Vue {
   @Prop() node!: Node
   name = this.node.name
   time = ''
+  menu: boolean[] = []
   clickedEdit = false
   $refs!: {
     title: HTMLFormElement
+    menu: HTMLFormElement[]
   }
+
   async onEdit(event: { target: { innerText: string } }) {
     if (event.target.innerText === 'edit') {
       this.clickedEdit = true
@@ -85,17 +85,30 @@ export default class NodeCard extends Vue {
 
   formatHourMinutes(epoch: number) {
     const date = new Date(epoch * 1000)
-    return `${date.getHours()}:${date.getMinutes()}`
+    return `${date.getHours().toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false,
+    })}:${date.getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })}`
   }
 
   removeFeedTime(index: number) {
     this.node.schedule.splice(index, 1)
   }
 
+  setFeedTime(index: number) {
+    const date = new Date()
+    date.setHours(parseInt(this.time.split(':')[0]))
+    date.setMinutes(parseInt(this.time.split(':')[1]))
+    this.node.schedule[index] = Math.round(date.getTime() / 1000)
+    this.$refs.menu[index].save(this.time)
+  }
+
   async saveFeedTimes() {
     try {
       await axios.post(`http://${this.node.ip}/schedule`, this.node.schedule)
-    } catch(err) { console.log(err)}
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
 </script>
