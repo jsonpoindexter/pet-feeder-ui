@@ -80,7 +80,7 @@ export default class NodeCard extends Vue {
   }
   addFeedTime() {
     const date = new Date()
-    this.node.schedule.push(Math.round(date.getTime() / 1000))
+    this.node.schedule.push(Math.round(date.valueOf() / 1000))
   }
 
   formatHourMinutes(epoch: number) {
@@ -99,7 +99,7 @@ export default class NodeCard extends Vue {
     const date = new Date()
     date.setHours(parseInt(this.time.split(':')[0]))
     date.setMinutes(parseInt(this.time.split(':')[1]))
-    this.node.schedule[index] = Math.round(date.getTime() / 1000)
+    this.node.schedule[index] = Math.round(date.valueOf() / 1000)
     this.$refs.menu[index].save(this.time)
   }
 
