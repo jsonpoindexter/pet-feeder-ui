@@ -37,6 +37,9 @@
     <v-container>
       <v-btn @click="saveFeedTimes">Save Feed Times</v-btn>
     </v-container>
+    <v-container>
+      <v-btn @click="feedNow">Feed Now</v-btn>
+    </v-container>
   </v-card>
 </template>
 <script lang="ts">
@@ -78,6 +81,7 @@ export default class NodeCard extends Vue {
       }
     }
   }
+
   addFeedTime() {
     const date = new Date()
     this.node.schedule.push(Math.round(date.valueOf() / 1000))
@@ -106,6 +110,14 @@ export default class NodeCard extends Vue {
   async saveFeedTimes() {
     try {
       await axios.post(`http://${this.node.ip}/schedule`, this.node.schedule)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async feedNow() {
+    try {
+      await axios.post(`http://${this.node.ip}/feed`)
     } catch (err) {
       console.log(err)
     }
