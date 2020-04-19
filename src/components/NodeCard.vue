@@ -27,10 +27,16 @@
             readonly
             v-on="on"
           ></v-text-field>
-          <v-switch label="Today" :value="true" />
         </template>
         <v-time-picker v-if="menu[index]" v-model="time" full-width @click:minute="setFeedTime(index)"></v-time-picker>
       </v-menu>
+      <v-switch
+        class="pa-3"
+        v-if="node.schedule[index] >= currentEpoch"
+        label="Tomorrow"
+        :input-value="!(node.schedule[index] >= currentEpoch)"
+        @change="toggleTomorrow(index)"
+      />
     </v-card-text>
     <v-container>
       <v-btn @click="addFeedTime">Add Feed Time</v-btn>
@@ -63,6 +69,21 @@ export default class NodeCard extends Vue {
     menu: HTMLFormElement[]
   }
 
+  get currentEpoch(): number {
+    return Math.round(new Date().valueOf() / 1000)
+  }
+
+  toggleTomorrow(index: number) {
+    // Add or subtract 24hr
+    this.node.schedule[index] >= this.currentEpoch
+      ? (this.node.schedule[index] += 24 * 60 * 60)
+      : (this.node.schedule[index] -= 24 * 60 * 60)
+  }
+
+  // today true
+  // selected time is greater than or equal to current time
+  // or user selects
+
   async onEdit(event: { target: { innerText: string } }) {
     if (event.target.innerText === 'edit') {
       this.clickedEdit = true
@@ -84,8 +105,7 @@ export default class NodeCard extends Vue {
   }
 
   addFeedTime() {
-    const date = new Date()
-    this.node.schedule.push(Math.round(date.valueOf() / 1000))
+    this.node.schedule.push(this.currentEpoch)
   }
 
   formatHourMinutes(epoch: number) {
