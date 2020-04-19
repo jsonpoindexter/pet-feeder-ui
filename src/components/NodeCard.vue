@@ -80,10 +80,6 @@ export default class NodeCard extends Vue {
       : (this.node.schedule[index] -= 24 * 60 * 60)
   }
 
-  // today true
-  // selected time is greater than or equal to current time
-  // or user selects
-
   async onEdit(event: { target: { innerText: string } }) {
     if (event.target.innerText === 'edit') {
       this.clickedEdit = true
@@ -95,7 +91,7 @@ export default class NodeCard extends Vue {
       this.clickedEdit = false
       if (this.name !== this.node.name) {
         try {
-          await axios.post(`http://${this.node.ip}/name`, null, { params: { name: this.name } })
+          await axios.post(`https://${this.node.ip}/name`, null, { params: { name: this.name },  })
           this.node.name = this.name
         } catch (err) {
           console.log(err)
@@ -130,7 +126,7 @@ export default class NodeCard extends Vue {
 
   async saveFeedTimes() {
     try {
-      await axios.post(`http://${this.node.ip}/schedule`, this.node.schedule)
+      await axios.post(`https://${this.node.ip}/schedule`, this.node.schedule)
     } catch (err) {
       console.log(err)
     }
@@ -138,7 +134,7 @@ export default class NodeCard extends Vue {
 
   async feedNow() {
     try {
-      await axios.post(`http://${this.node.ip}/feed`)
+      await axios.post(`https://${this.node.ip}/feed`)
     } catch (err) {
       console.log(err)
     }

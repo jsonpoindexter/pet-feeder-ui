@@ -31,9 +31,9 @@ export default class NodeSearch extends Vue {
     await Promise.all(
       array.map(async num => {
         try {
-          const response = await axios.get(`http://${this.networkAddress}.${num}/schedule`, {
+          const response = await axios.get(`https://${this.networkAddress}.${num}/schedule`, {
             // TODO: implement increase timeout
-            timeout: 1000,
+            timeout: 5000,
           })
           this.nodes.push({
             ip: `${this.networkAddress}.${num}`,
