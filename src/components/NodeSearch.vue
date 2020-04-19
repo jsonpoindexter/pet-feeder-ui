@@ -5,7 +5,7 @@
       <v-btn :loading="searching" medium :disabled="searching" @click="onSearch">Search</v-btn>
     </div>
     <template v-if="!searching">
-      <v-container>
+      <v-container class="d-flex flex-row flex-wrap justify-center">
         <NodeCard v-for="node in nodes" :key="node.ip" :node="node" />
       </v-container>
     </template>
@@ -47,4 +47,5 @@ export default class NodeSearch extends Vue {
   }
 }
 </script>
-<style scoped></style>
+<style scoped>
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="344" outlined ref="card">
+  <v-card class="ma-5" min-width="344" outlined ref="card">
     <v-card-title>
       <v-text-field flat :value="node.name" :disabled="!clickedEdit" ref="title" v-model="name" />
       <v-icon class="ml-sm-4" @click="onEdit">{{ clickedEdit ? 'save' : 'edit' }}</v-icon>
@@ -27,6 +27,7 @@
             readonly
             v-on="on"
           ></v-text-field>
+          <v-switch label="Today" :value="true" />
         </template>
         <v-time-picker v-if="menu[index]" v-model="time" full-width @click:minute="setFeedTime(index)"></v-time-picker>
       </v-menu>
