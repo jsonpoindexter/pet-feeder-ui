@@ -32,7 +32,7 @@
       </v-menu>
       <v-switch
         class="pa-3"
-        v-if="node.schedule[index] >= currentEpoch"
+        v-if="node.schedule[index] >= currentEpoch && node.schedule[index] < tomorrowStart"
         label="Tomorrow"
         :input-value="!(node.schedule[index] >= currentEpoch)"
         @change="toggleTomorrow(index)"
@@ -70,12 +70,17 @@ export default class NodeCard extends Vue {
   }
 
   get currentEpoch(): number {
-    return Math.round(new Date().valueOf() / 1000)
+    return Math.round(new Date().setSeconds(0, 0) / 1000)
+  }
+
+  // Tomorrows's date at 00:00 in the morning
+  get tomorrowStart(): number {
+    return new Date().setHours(0, 0, 0, 0) / 1000 + 24 * 60 * 60
   }
 
   toggleTomorrow(index: number) {
     // Add or subtract 24hr
-    this.node.schedule[index] >= this.currentEpoch
+    this.node.schedule[index] < this.tomorrowStart
       ? (this.node.schedule[index] += 24 * 60 * 60)
       : (this.node.schedule[index] -= 24 * 60 * 60)
   }
@@ -91,7 +96,7 @@ export default class NodeCard extends Vue {
       this.clickedEdit = false
       if (this.name !== this.node.name) {
         try {
-          await axios.post(`https://${this.node.ip}/name`, null, { params: { name: this.name },  })
+          await axios.post(`https://${this.node.ip}/name`, null, { params: { name: this.name } })
           this.node.name = this.name
         } catch (err) {
           console.log(err)
@@ -101,6 +106,7 @@ export default class NodeCard extends Vue {
   }
 
   addFeedTime() {
+    this.time = this.formatHourMinutes(this.currentEpoch)
     this.node.schedule.push(this.currentEpoch)
   }
 
@@ -118,9 +124,13 @@ export default class NodeCard extends Vue {
 
   setFeedTime(index: number) {
     const date = new Date()
-    date.setHours(parseInt(this.time.split(':')[0]))
-    date.setMinutes(parseInt(this.time.split(':')[1]))
-    this.node.schedule[index] = Math.round(date.valueOf() / 1000)
+    const [hours, minutes] = this.time.split(':')
+    date.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+    // date.setMinutes))
+    // If user selects time that has already passed for today, set day for tomorrow
+    let epoch = Math.round(date.valueOf() / 1000)
+    if (epoch < this.currentEpoch) epoch += 24 * 60 * 60
+    this.node.schedule[index] = epoch
     this.$refs.menu[index].save(this.time)
   }
 
