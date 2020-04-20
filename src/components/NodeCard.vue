@@ -5,7 +5,7 @@
       <v-icon class="ml-sm-4" @click="onEdit">{{ clickedEdit ? 'save' : 'edit' }}</v-icon>
     </v-card-title>
     <v-card-subtitle class="text-left">{{ node.ip }}</v-card-subtitle>
-    <v-card-text v-for="(schedule, index) in node.schedule" :key="schedule">
+    <v-card-text v-for="(schedule, index) in node.schedule" :key="`${schedule}-${index}`">
       <v-menu
         v-model="menu[index]"
         ref="menu"
