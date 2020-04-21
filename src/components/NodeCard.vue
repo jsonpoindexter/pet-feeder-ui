@@ -50,12 +50,8 @@
   </v-card>
 </template>
 <script lang="ts">
-interface Node {
-  name: string
-  ip: string
-  schedule: number[]
-}
 import axios from 'axios'
+import { Node } from "@/store/types";
 import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component({})
 export default class NodeCard extends Vue {
