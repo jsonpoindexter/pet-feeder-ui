@@ -4,7 +4,7 @@
       <v-text-field label="network address" v-model="networkAddress" placeholder="Enter network address" />
       <v-btn :loading="searching" medium :disabled="searching" @click="onSearch">Search</v-btn>
     </div>
-    <template v-if="!searching">
+    <template>
       <v-container class="d-flex flex-row flex-wrap justify-center">
         <NodeCard v-for="node in nodes" :key="node.ip" :node="node" />
       </v-container>
@@ -15,6 +15,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
 import NodeCard from '@/components/NodeCard'
+
 @Component({
   components: { NodeCard },
 })
@@ -47,5 +48,4 @@ export default class NodeSearch extends Vue {
   }
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>
